@@ -1,0 +1,26 @@
+<%- include("partials/header") %> 
+<div class="container-fluid">
+    <div class="row d-flex align-items-center heading">
+        <div class="col heading-text">
+            <h1 class="display-4">Create The Best Startup</h1>
+            <hr>
+            <h3>Login</h3>
+        </div>
+        <div class="col">
+            <form action="/login" method="POST">
+                <div class="form-group">
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" class="form-control" id="email" name="email" placeholder="example@startuply.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" placeholder='NOT "password123"' required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
+  </div>
+
+<%- include("partials/footer") %>
