@@ -2,6 +2,8 @@ form {
     padding: 20px;
     border-radius: 30px;
     background-color: white;
+    max-width: 760px;
+    margin: 0 auto;
 }
 
 hr {

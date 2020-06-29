@@ -1,7 +1,20 @@
 const express = require('express')
 const app = express()
+require('dotenv').config()
 const bodyParser = require('body-parser')
 const bcrypt = require('bcrypt')
+
+var mongoose = require("mongoose")
+mongoose.set('useUnifiedTopology', true);
+mongoose.connect("mongodb://localhost/simpleAuthentication", { useNewUrlParser: true })
+
+var userSchema = new mongoose.Schema({
+    name: String,
+    email: String,
+    password: String
+})
+
+var User = mongoose.model("User", userSchema)
 
 app.set('view engine', 'ejs')
 
@@ -20,12 +33,17 @@ app.get('/login', (req, res) => {
 })
 
 app.post('/login', (req, res) => {
-    var user = users.find(user => user.email === req.body.email)
-    if (bcrypt.compareSync(req.body.password, user.password)) {
-        res.send("Hi " + user.name)
-    } else {
-        res.send("Wrong password, try again.")
-    }
+    User.find({ email : req.body.email }, 'password name', (err, user) => {
+        if (err) {
+            console.log("Login error")
+        } else {
+            if (bcrypt.compareSync(req.body.password, user[0].password)) {
+                res.send("Hi " + user[0].name)
+            } else {
+                res.send("Wrong password, try again.")
+            }
+        }
+    })
 })
 
 app.get('/register', (req, res) => {
@@ -33,13 +51,25 @@ app.get('/register', (req, res) => {
 })
 
 app.post('/register', (req, res) => {
-    users.push({
-        name: req.body.name,
-        email: req.body.email,
-        password: bcrypt.hashSync(req.body.password, 10)
+    User.countDocuments({email: req.body.email}, (err, count) => {
+        if(count > 0) {
+            console.log("You already have an account with us")
+            res.redirect('/login')
+        } else {
+            User.create({
+                name: req.body.name,
+                email: req.body.email,
+                password: bcrypt.hashSync(req.body.password, 10)
+            }, (err, User) => {
+                if(err) {
+                    console.log("Something went wrong")
+                } else {
+                    console.log(User)
+                }
+                res.redirect('/login')
+            })
+        }
     })
-    console.log(users)
-    res.redirect('/login')
 })
 
 app.listen('3000', () => {
