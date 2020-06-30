@@ -6,7 +6,7 @@ const bcrypt = require('bcrypt')
 
 var mongoose = require("mongoose")
 mongoose.set('useUnifiedTopology', true);
-mongoose.connect("mongodb://localhost/simpleAuthentication", { useNewUrlParser: true })
+mongoose.connect(process.env.DB_URL, { useNewUrlParser: true })
 
 var userSchema = new mongoose.Schema({
     name: String,
@@ -38,7 +38,7 @@ app.post('/login', (req, res) => {
             console.log("Login error")
         } else {
             if (bcrypt.compareSync(req.body.password, user[0].password)) {
-                res.send("Hi " + user[0].name)
+                res.render('welcome', {name: user[0].name})
             } else {
                 res.send("Wrong password, try again.")
             }
@@ -72,6 +72,6 @@ app.post('/register', (req, res) => {
     })
 })
 
-app.listen('3000', () => {
+app.listen(process.env.PORT, process.env.ADDRESS, () => {
     console.log("Server is running")
 })
